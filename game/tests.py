@@ -319,14 +319,17 @@ class CoinQuestScoreSubmissionTests(TestCase):
         self.assertIn('image/svg+xml', response.headers.get('Content-Type', ''))
         self.assertIn('<svg', response.content.decode('utf-8'))
 
-    def test_home_page_under_simulated_vercel(self):
-        """Verify home page loads properly under simulated Vercel conditions."""
-        import os
-        from django.test.utils import override_settings
-        with override_settings(DEBUG=False):
-            response = self.client.get(reverse('game:home'))
-            self.assertEqual(response.status_code, 200)
-            self.assertContains(response, "COIN")
+    def test_unseeded_database_fallback(self):
+        """Verify views still render with dummy levels when database has no records."""
+        Level.objects.all().delete()
+        res_home = self.client.get(reverse('game:home'))
+        self.assertEqual(res_home.status_code, 200)
+
+        res_levels = self.client.get(reverse('game:levels'))
+        self.assertEqual(res_levels.status_code, 200)
+
+        res_play = self.client.get(reverse('game:play', args=[1]))
+        self.assertEqual(res_play.status_code, 200)
 
 
 

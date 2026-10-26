@@ -16,15 +16,4 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 application = get_wsgi_application()
 app = application
 
-# On Vercel serverless environment, ensure database migrations and default data are ready
-if os.environ.get('VERCEL'):
-    try:
-        from django.core.management import call_command
-        call_command('migrate', interactive=False)
-        from game.views import ensure_default_levels
-        ensure_default_levels()
-    except Exception as e:
-        import traceback
-        traceback.print_exc()
-
 
