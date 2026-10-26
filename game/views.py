@@ -1,4 +1,6 @@
+import os
 import json
+
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.views.decorators.http import require_POST
@@ -62,11 +64,22 @@ DEFAULT_LEVELS = [
 
 def ensure_default_levels():
     """Ensure that the 5 standard levels exist in the database."""
+    if os.environ.get('VERCEL'):
+        try:
+            from django.db import connection
+            from django.core.management import call_command
+            tables = connection.introspection.table_names()
+            if 'game_level' not in tables:
+                call_command('migrate', interactive=False)
+        except Exception as e:
+            pass
+
     for data in DEFAULT_LEVELS:
         Level.objects.get_or_create(
             level_number=data['level_number'],
             defaults=data
         )
+
 
 
 def get_unlocked_levels(request):
