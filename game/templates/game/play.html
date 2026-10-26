@@ -1,0 +1,252 @@
+{% extends 'game/base.html' %}
+{% load static %}
+
+{% block title %}Playing Level {{ level.level_number }}: {{ level.title }} — Coin Quest{% endblock %}
+
+{% block content %}
+<div class="game-view-wrapper">
+  <!-- Top HUD Bar -->
+  <div class="game-hud" id="game-hud">
+    <div class="hud-left">
+      <!-- Player Lives -->
+      <div class="hud-item hud-lives" title="Remaining Lives" aria-label="Remaining Lives">
+        <span class="hud-label">LIVES</span>
+        <div class="hearts-container" id="hud-hearts">
+          <span class="heart active" id="heart-1">❤️</span>
+          <span class="heart active" id="heart-2">❤️</span>
+          <span class="heart active" id="heart-3">❤️</span>
+        </div>
+      </div>
+
+      <!-- Coins Collected -->
+      <div class="hud-item hud-coins" title="Coins Collected" aria-label="Coins Collected">
+        <span class="hud-icon">🪙</span>
+        <span class="hud-val" id="hud-coins">0</span>
+        <span class="hud-sub">/ <span id="hud-target-coins">{{ level.target_coins }}</span></span>
+      </div>
+
+      <!-- Live Score -->
+      <div class="hud-item hud-score" title="Current Score" aria-label="Current Score">
+        <span class="hud-label">SCORE</span>
+        <span class="hud-val score-highlight" id="hud-score">0</span>
+      </div>
+    </div>
+
+    <!-- Center Level Title -->
+    <div class="hud-center">
+      <div class="hud-level-pill">
+        <span class="hud-level-num">LVL {{ level.level_number }}</span>
+        <span class="hud-level-title">{{ level.title }}</span>
+      </div>
+    </div>
+
+    <!-- Right Controls: Timer, Mute, Pause, Restart -->
+    <div class="hud-right">
+      <div class="hud-item hud-timer" title="Elapsed Time" aria-label="Elapsed Time">
+        <span class="hud-icon">⏱️</span>
+        <span class="hud-val" id="hud-timer">00:00</span>
+      </div>
+
+      <button id="hud-sound-btn" class="hud-btn" title="Toggle Sound (M)" aria-label="Toggle Sound">
+        <span id="hud-sound-icon">🔊</span>
+      </button>
+
+      <button id="hud-restart-btn" class="hud-btn" title="Restart Level (R)" aria-label="Restart Level">
+        🔄
+      </button>
+
+      <button id="hud-pause-btn" class="hud-btn" title="Pause Game (ESC)" aria-label="Pause Game">
+        ⏸️
+      </button>
+
+      <a href="{% url 'game:levels' %}" class="hud-btn" title="Exit to Level Select" aria-label="Exit to Level Select">
+        🗺️
+      </a>
+    </div>
+  </div>
+
+  <!-- Game Canvas Stage -->
+  <div class="canvas-stage-container" id="canvas-stage-container">
+    <canvas id="game-canvas" width="960" height="540" tabindex="0" aria-label="Coin Quest Game Canvas"></canvas>
+
+    <!-- Objective Notification Banner (slides in on start) -->
+    <div class="objective-banner" id="objective-banner">
+      <span class="obj-icon">🎯</span>
+      <span class="obj-text">Collect at least <strong>{{ level.target_coins }} coins</strong> to activate the Exit Portal!</span>
+    </div>
+
+    <!-- Touch / Virtual Mobile Controls -->
+    <div class="touch-controls-layer" id="touch-controls-layer">
+      <div class="touch-group touch-left-group">
+        <button class="touch-btn touch-btn-left" id="touch-btn-left" aria-label="Move Left">◀</button>
+        <button class="touch-btn touch-btn-right" id="touch-btn-right" aria-label="Move Right">▶</button>
+      </div>
+      <div class="touch-group touch-right-group">
+        <button class="touch-btn touch-btn-jump" id="touch-btn-jump" aria-label="Jump">▲ JUMP</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Hint & Quick Info -->
+  <div class="game-footer-bar">
+    <div class="controls-legend">
+      <span><kbd>A</kbd> / <kbd>D</kbd> or <kbd>←</kbd> <kbd>→</kbd> Move</span>
+      <span><kbd>W</kbd> / <kbd>Space</kbd> or <kbd>↑</kbd> Jump</span>
+      <span><kbd>ESC</kbd> or <kbd>P</kbd> Pause</span>
+      <span><kbd>R</kbd> Restart</span>
+      <span><kbd>M</kbd> Mute</span>
+    </div>
+    <div class="level-meta-hint">
+      <span>Par Time: {{ level.par_time_seconds }}s</span>
+      <span>Difficulty: <strong class="diff-{{ level.difficulty|lower }}">{{ level.difficulty }}</strong></span>
+    </div>
+  </div>
+</div>
+
+<!-- PAUSE MODAL OVERLAY -->
+<div class="game-modal-backdrop" id="pause-modal" aria-hidden="true" role="dialog" aria-labelledby="pause-title">
+  <div class="game-modal-card glass-panel">
+    <div class="modal-icon-badge">⏸️</div>
+    <h2 class="modal-title" id="pause-title">GAME PAUSED</h2>
+    <p class="modal-desc">Take a breather. Your adventure awaits!</p>
+
+    <div class="modal-stats-summary">
+      <div class="mstat">
+        <span class="mstat-lbl">Coins</span>
+        <span class="mstat-val" id="pause-coins">0 / {{ level.target_coins }}</span>
+      </div>
+      <div class="mstat">
+        <span class="mstat-lbl">Time</span>
+        <span class="mstat-val" id="pause-time">00:00</span>
+      </div>
+      <div class="mstat">
+        <span class="mstat-lbl">Score</span>
+        <span class="mstat-val" id="pause-score">0</span>
+      </div>
+    </div>
+
+    <div class="modal-actions-stacked">
+      <button class="btn btn-primary btn-lg" id="btn-resume-game">▶ Resume Game</button>
+      <button class="btn btn-secondary btn-md" id="btn-pause-restart">🔄 Restart Level</button>
+      <a href="{% url 'game:levels' %}" class="btn btn-outline btn-md">🗺️ Level Select</a>
+    </div>
+  </div>
+</div>
+
+<!-- LEVEL CLEARED / VICTORY MODAL OVERLAY -->
+<div class="game-modal-backdrop" id="victory-modal" aria-hidden="true" role="dialog" aria-labelledby="victory-title">
+  <div class="game-modal-card glass-panel victory-card">
+    <div class="victory-header">
+      <div class="celebration-particles" aria-hidden="true">✨ 🏆 ✨</div>
+      <h2 class="modal-title text-gradient" id="victory-title">REALM CLEARED!</h2>
+      <p class="modal-desc" id="victory-realm-name">Level {{ level.level_number }}: {{ level.title }}</p>
+    </div>
+
+    <!-- Star Rating Display -->
+    <div class="victory-stars" id="victory-stars">
+      <span class="star-icon" id="star-1">★</span>
+      <span class="star-icon" id="star-2">★</span>
+      <span class="star-icon" id="star-3">★</span>
+    </div>
+
+    <!-- Run Summary Stats Breakdown -->
+    <div class="score-breakdown-card">
+      <div class="breakdown-row">
+        <span>🪙 Coins Collected:</span>
+        <strong id="victory-coins-summary">0 / {{ level.total_coins }}</strong>
+      </div>
+      <div class="breakdown-row">
+        <span>❤️ Lives Remaining:</span>
+        <strong id="victory-lives-summary">3</strong>
+      </div>
+      <div class="breakdown-row">
+        <span>⏱️ Completion Time:</span>
+        <strong id="victory-time-summary">0.0s (Par: {{ level.par_time_seconds }}s)</strong>
+      </div>
+      <div class="breakdown-divider"></div>
+      <div class="breakdown-row final-score-row">
+        <span>TOTAL SCORE:</span>
+        <strong class="total-score-val" id="victory-final-score">0</strong>
+      </div>
+    </div>
+
+    <!-- Player Name input for Leaderboard Submission -->
+    <div class="submit-score-section" id="submit-score-section">
+      <label for="player-name-input" class="input-label">Adventurer Name:</label>
+      <div class="input-with-button">
+        <input type="text" id="player-name-input" maxlength="30" value="{{ player_name }}" class="form-input" placeholder="Enter your name">
+        <button class="btn btn-primary" id="btn-save-score">Save Record</button>
+      </div>
+      <div class="submit-status-msg" id="submit-status-msg" aria-live="polite"></div>
+    </div>
+
+    <div class="modal-actions-stacked">
+      {% if next_level_number %}
+        <a href="{% url 'game:play' next_level_number %}" class="btn btn-primary btn-lg pulse-glow" id="btn-next-level">
+          Next Level (Lvl {{ next_level_number }}) →
+        </a>
+      {% else %}
+        <a href="{% url 'game:scores' %}" class="btn btn-primary btn-lg" id="btn-view-leaderboard">
+          View High Scores 🏆
+        </a>
+      {% endif %}
+      <div class="button-row">
+        <button class="btn btn-secondary btn-md" id="btn-victory-replay">🔄 Replay Level</button>
+        <a href="{% url 'game:levels' %}" class="btn btn-outline btn-md">🗺️ All Levels</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- GAME OVER MODAL OVERLAY -->
+<div class="game-modal-backdrop" id="gameover-modal" aria-hidden="true" role="dialog" aria-labelledby="gameover-title">
+  <div class="game-modal-card glass-panel gameover-card">
+    <div class="modal-icon-badge red-badge">💀</div>
+    <h2 class="modal-title red-text" id="gameover-title">QUEST FAILED!</h2>
+    <p class="modal-desc" id="gameover-desc">You ran out of lives in {{ level.title }}. Don't give up!</p>
+
+    <div class="modal-stats-summary">
+      <div class="mstat">
+        <span class="mstat-lbl">Coins Snagged</span>
+        <span class="mstat-val" id="gameover-coins">0</span>
+      </div>
+      <div class="mstat">
+        <span class="mstat-lbl">Time Survived</span>
+        <span class="mstat-val" id="gameover-time">00:00</span>
+      </div>
+      <div class="mstat">
+        <span class="mstat-lbl">Score</span>
+        <span class="mstat-val" id="gameover-score">0</span>
+      </div>
+    </div>
+
+    <div class="modal-actions-stacked">
+      <button class="btn btn-danger btn-lg pulse-glow" id="btn-gameover-retry">🔄 Try Again</button>
+      <a href="{% url 'game:levels' %}" class="btn btn-secondary btn-md">🗺️ Level Select</a>
+      <a href="{% url 'game:how_to_play' %}" class="btn btn-outline btn-md">📖 Platforming Tips</a>
+    </div>
+  </div>
+</div>
+
+<!-- Embedded Level Config Data -->
+<script id="current-level-meta" type="application/json">
+{
+  "levelNumber": {{ level.level_number }},
+  "title": "{{ level.title|escapejs }}",
+  "subtitle": "{{ level.subtitle|escapejs }}",
+  "difficulty": "{{ level.difficulty|escapejs }}",
+  "targetCoins": {{ level.target_coins }},
+  "totalCoins": {{ level.total_coins }},
+  "parTimeSeconds": {{ level.par_time_seconds }},
+  "nextLevelNumber": {% if next_level_number %}{{ next_level_number }}{% else %}null{% endif %},
+  "submitScoreUrl": "{% url 'game:submit_score' %}",
+  "csrfToken": "{{ csrf_token }}"
+}
+</script>
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'game/js/levels.js' %}"></script>
+  <script src="{% static 'game/js/game.js' %}"></script>
+  <script src="{% static 'game/js/ui.js' %}"></script>
+{% endblock %}

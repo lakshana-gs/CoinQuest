@@ -1,0 +1,214 @@
+{% extends 'game/base.html' %}
+{% load static %}
+
+{% block title %}Coin Quest — 2D Side-Scrolling Platform Adventure{% endblock %}
+
+{% block content %}
+<section class="hero-section">
+  <div class="hero-backdrop"></div>
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span class="badge-dot"></span> 2D INDIE PLATFORMER
+    </div>
+    <h1 class="hero-title">
+      COIN <span class="text-gradient">QUEST</span>
+    </h1>
+    <p class="hero-subtitle">
+      Embark on a high-flying quest across floating realms! Jump over yawning chasms, dodge razor-sharp spikes and patrolling sentries, collect gold coins, and unlock magical exit portals.
+    </p>
+
+    <!-- Player Name input & Quick Launch -->
+    <div class="hero-cta-group">
+      <a href="{% url 'game:play' highest_unlocked %}" class="btn btn-primary btn-lg pulse-glow" id="hero-play-btn">
+        <span class="btn-icon-prefix">▶</span> Play Level {{ highest_unlocked }}
+      </a>
+      <a href="{% url 'game:levels' %}" class="btn btn-secondary btn-lg" id="hero-levels-btn">
+        🗺️ Level Select
+      </a>
+      <a href="{% url 'game:scores' %}" class="btn btn-outline btn-lg" id="hero-scores-btn">
+        🏆 Leaderboard
+      </a>
+    </div>
+
+    <!-- Quick Stats Bar -->
+    <div class="hero-stats-bar">
+      <div class="stat-pill">
+        <span class="stat-icon">⭐</span>
+        <div class="stat-info">
+          <span class="stat-val">5 Levels</span>
+          <span class="stat-lbl">Handcrafted Realms</span>
+        </div>
+      </div>
+      <div class="stat-pill">
+        <span class="stat-icon">🪙</span>
+        <div class="stat-info">
+          <span class="stat-val">88 Coins</span>
+          <span class="stat-lbl">Across All Worlds</span>
+        </div>
+      </div>
+      <div class="stat-pill">
+        <span class="stat-icon">⚡</span>
+        <div class="stat-info">
+          <span class="stat-val">60 FPS</span>
+          <span class="stat-lbl">Smooth Canvas Engine</span>
+        </div>
+      </div>
+      <div class="stat-pill">
+        <span class="stat-icon">🏅</span>
+        <div class="stat-info">
+          <span class="stat-val">{{ total_runs }} Runs</span>
+          <span class="stat-lbl">Completed Worldwide</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Controls & How It Works Strip -->
+<section class="section-container">
+  <div class="section-header text-center">
+    <h2 class="section-title">Master the Adventure</h2>
+    <p class="section-subtitle">Intuitive controls, genuine platform physics, and thrilling challenges</p>
+  </div>
+
+  <div class="cards-grid three-col">
+    <div class="feature-card">
+      <div class="card-icon-wrapper cyan-glow">
+        <span class="card-icon">🎮</span>
+      </div>
+      <h3 class="card-title">Fluid Controls</h3>
+      <p class="card-text">
+        Use <strong>A / D</strong> or <strong>Left / Right</strong> arrows to move, and <strong>Space / W / Up</strong> to leap. Features responsive coyote time and jump buffering!
+      </p>
+      <div class="key-hints">
+        <span class="key-cap">A</span>
+        <span class="key-cap">D</span>
+        <span class="key-sep">+</span>
+        <span class="key-cap key-space">SPACE</span>
+      </div>
+    </div>
+
+    <div class="feature-card">
+      <div class="card-icon-wrapper gold-glow">
+        <span class="card-icon">🪙</span>
+      </div>
+      <h3 class="card-title">Collect & Unlock</h3>
+      <p class="card-text">
+        Snatch enough coins in each realm to awaken the ancient exit portal. Complete levels to unlock the next challenge and earn up to 3 stars!
+      </p>
+      <div class="key-hints">
+        <span class="star-pill">★ 1 Star: Clear</span>
+        <span class="star-pill">★★ 2 Stars: Target</span>
+        <span class="star-pill">★★★ 3 Stars: Par</span>
+      </div>
+    </div>
+
+    <div class="feature-card">
+      <div class="card-icon-wrapper red-glow">
+        <span class="card-icon">⚔️</span>
+      </div>
+      <h3 class="card-title">Hazards & Traps</h3>
+      <p class="card-text">
+        Beware of bottomless gaps, crystalline spikes, moving platforms, and patrolling sentries. You have 3 lives—protect every heart!
+      </p>
+      <div class="key-hints">
+        <span class="heart-pill">❤️ 3 Lives</span>
+        <span class="heart-pill">🛡️ Knockback Shield</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Quick Level Previews -->
+<section class="section-container">
+  <div class="section-header-flex">
+    <div>
+      <h2 class="section-title">The 5 Realms</h2>
+      <p class="section-subtitle">Progress through increasing difficulties and unique environments</p>
+    </div>
+    <a href="{% url 'game:levels' %}" class="btn btn-outline btn-sm">View All Levels →</a>
+  </div>
+
+  <div class="levels-preview-grid">
+    {% for lvl in levels %}
+      <div class="level-mini-card {% if lvl.level_number in unlocked_levels %}unlocked{% else %}locked{% endif %}">
+        <div class="mini-card-header">
+          <span class="mini-lvl-badge">Level {{ lvl.level_number }}</span>
+          <span class="mini-diff-badge diff-{{ lvl.difficulty|lower }}">{{ lvl.difficulty }}</span>
+        </div>
+        <h3 class="mini-card-title">{{ lvl.title }}</h3>
+        <p class="mini-card-desc">{{ lvl.subtitle }}</p>
+        <div class="mini-card-footer">
+          <span class="mini-coin-target">🪙 {{ lvl.target_coins }}/{{ lvl.total_coins }} Coins</span>
+          {% if lvl.level_number in unlocked_levels %}
+            <a href="{% url 'game:play' lvl.level_number %}" class="btn btn-primary btn-xs">Play</a>
+          {% else %}
+            <span class="locked-icon" title="Locked">🔒 Locked</span>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- Hall of Fame / Top Scores Preview -->
+{% if top_scores %}
+<section class="section-container">
+  <div class="section-header-flex">
+    <div>
+      <h2 class="section-title">Hall of Fame</h2>
+      <p class="section-subtitle">Top platforming adventurers across all realms</p>
+    </div>
+    <a href="{% url 'game:scores' %}" class="btn btn-outline btn-sm">Full Leaderboard →</a>
+  </div>
+
+  <div class="table-responsive">
+    <table class="leaderboard-table">
+      <thead>
+        <tr>
+          <th>Rank</th>
+          <th>Adventurer</th>
+          <th>Realm</th>
+          <th>Score</th>
+          <th>Coins</th>
+          <th>Time</th>
+          <th>Rating</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for score in top_scores %}
+          <tr>
+            <td class="rank-col">
+              {% if forloop.counter == 1 %}
+                <span class="medal gold-medal">🥇 1st</span>
+              {% elif forloop.counter == 2 %}
+                <span class="medal silver-medal">🥈 2nd</span>
+              {% elif forloop.counter == 3 %}
+                <span class="medal bronze-medal">🥉 3rd</span>
+              {% else %}
+                <span class="rank-num">#{{ forloop.counter }}</span>
+              {% endif %}
+            </td>
+            <td class="player-col">
+              <span class="player-avatar">👤</span>
+              <strong>{{ score.player_name }}</strong>
+            </td>
+            <td>
+              <span class="level-tag">Lvl {{ score.level.level_number }}: {{ score.level.title }}</span>
+            </td>
+            <td class="score-col">{{ score.score }}</td>
+            <td>{{ score.coins_collected }}/{{ score.level.total_coins }}</td>
+            <td>{{ score.time_taken_seconds|floatformat:1 }}s</td>
+            <td>
+              <span class="stars-display">
+                {% if score.stars == 3 %}★★★{% elif score.stars == 2 %}★★☆{% else %}★☆☆{% endif %}
+              </span>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,125 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Coin Quest — 2D Platform Adventure{% endblock %}</title>
+  <meta name="description" content="Coin Quest is a vibrant 2D platform adventure game. Leap across floating islands, collect golden coins, dodge dangerous traps, and unlock challenging levels!">
+  
+  <!-- Google Fonts: Outfit for clean modern UI & Press Start 2P for retro arcade badges -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Press+Start+2P&display=swap" rel="stylesheet">
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="{% static 'game/css/style.css' %}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="site-body">
+  <!-- Navigation Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="{% url 'game:home' %}" class="brand-logo" id="nav-brand-logo">
+        <span class="coin-icon-spin" aria-hidden="true">🪙</span>
+        <span class="brand-text">COIN<span class="brand-accent">QUEST</span></span>
+      </a>
+
+      <nav class="site-nav" aria-label="Main Navigation">
+        <ul class="nav-list">
+          <li>
+            <a href="{% url 'game:home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" id="nav-home">
+              Home
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'game:levels' %}" class="nav-link {% if request.resolver_match.url_name == 'levels' %}active{% endif %}" id="nav-levels">
+              Levels
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'game:scores' %}" class="nav-link {% if request.resolver_match.url_name == 'scores' %}active{% endif %}" id="nav-scores">
+              Leaderboard
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'game:how_to_play' %}" class="nav-link {% if request.resolver_match.url_name == 'how_to_play' %}active{% endif %}" id="nav-how-to-play">
+              How to Play
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <!-- Audio Mute/Unmute quick toggle -->
+        <button id="global-sound-toggle" class="btn-icon" aria-label="Toggle sound effects" title="Toggle Sound">
+          <span class="sound-icon" id="sound-icon-display">🔊</span>
+        </button>
+        <a href="{% url 'game:play_default' %}" class="btn btn-primary btn-sm play-cta-btn" id="nav-play-btn">
+          ▶ Play Now
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Global Flash Messages -->
+  {% if messages %}
+    <div class="messages-container" aria-live="polite">
+      {% for message in messages %}
+        <div class="alert-toast alert-{{ message.tags|default:'info' }}">
+          <span class="toast-icon">
+            {% if message.tags == 'warning' %}⚠️{% elif message.tags == 'error' %}❌{% else %}ℹ️{% endif %}
+          </span>
+          <span class="toast-text">{{ message }}</span>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <!-- Main Content Block -->
+  <main class="site-main" id="main-content">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-info">
+        <div class="footer-logo">🪙 COIN QUEST</div>
+        <p class="footer-desc">A premium 2D platform adventure crafted with Django, HTML5 Canvas, and Vanilla JavaScript.</p>
+      </div>
+      <div class="footer-links">
+        <a href="{% url 'game:home' %}">Home</a>
+        <a href="{% url 'game:levels' %}">Level Select</a>
+        <a href="{% url 'game:scores' %}">High Scores</a>
+        <a href="{% url 'game:how_to_play' %}">Controls & Guide</a>
+      </div>
+      <div class="footer-copy">
+        &copy; 2026 Coin Quest. Designed for pure platforming fun.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Base Sound Synthesizer Script -->
+  <script src="{% static 'game/js/sound.js' %}"></script>
+  <script>
+    // Initialize sound toggle state
+    document.addEventListener('DOMContentLoaded', () => {
+      const btn = document.getElementById('global-sound-toggle');
+      const icon = document.getElementById('sound-icon-display');
+      if (btn && icon && window.SoundManager) {
+        function updateIcon() {
+          icon.textContent = SoundManager.isMuted() ? '🔇' : '🔊';
+        }
+        updateIcon();
+        btn.addEventListener('click', () => {
+          const muted = SoundManager.toggleMute();
+          updateIcon();
+          if (!muted) SoundManager.playCoin();
+        });
+      }
+    });
+  </script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

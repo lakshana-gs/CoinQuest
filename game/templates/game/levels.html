@@ -1,0 +1,109 @@
+{% extends 'game/base.html' %}
+{% load static %}
+
+{% block title %}Level Select — Coin Quest{% endblock %}
+
+{% block content %}
+<div class="page-container">
+  <div class="page-header text-center">
+    <div class="hero-badge">
+      <span class="badge-dot"></span> REALM SELECTOR
+    </div>
+    <h1 class="page-title">Choose Your <span class="text-gradient">Realm</span></h1>
+    <p class="page-subtitle">
+      Conquer each world by collecting enough gold coins to unlock its exit portal. Complete a realm to unlock the next!
+    </p>
+
+    <!-- Progress indicator -->
+    <div class="progression-pill-wrapper">
+      <div class="progression-pill">
+        <span>Highest Unlocked: <strong>Level {{ highest_unlocked }} of 5</strong></span>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" style="width: calc({{ highest_unlocked }} / 5 * 100%);"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Level Cards Grid -->
+  <div class="level-cards-grid">
+    {% for item in levels_data %}
+      <div class="level-card {% if item.is_unlocked %}card-unlocked{% else %}card-locked{% endif %}">
+        <div class="card-status-strip">
+          <span class="card-lvl-num">LEVEL 0{{ item.level.level_number }}</span>
+          <span class="mini-diff-badge diff-{{ item.level.difficulty|lower }}">{{ item.level.difficulty }}</span>
+          {% if item.is_unlocked %}
+            <span class="status-badge unlocked-badge">🔓 Available</span>
+          {% else %}
+            <span class="status-badge locked-badge">🔒 Locked</span>
+          {% endif %}
+        </div>
+
+        <div class="card-main-content">
+          <h2 class="card-realm-name">{{ item.level.title }}</h2>
+          <h3 class="card-realm-subtitle">{{ item.level.subtitle }}</h3>
+          <p class="card-realm-desc">{{ item.level.description }}</p>
+
+          <div class="realm-specs-grid">
+            <div class="spec-item">
+              <span class="spec-label">Target Coins</span>
+              <span class="spec-value">🪙 {{ item.level.target_coins }} of {{ item.level.total_coins }}</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Par Time</span>
+              <span class="spec-value">⏱️ {{ item.level.par_time_seconds }}s</span>
+            </div>
+          </div>
+
+          <!-- Best Score & Stars if Completed -->
+          {% if item.best_score %}
+            <div class="best-score-banner">
+              <div class="best-stars">
+                {% if item.best_stars == 3 %}
+                  <span class="stars-gold">★★★</span>
+                {% elif item.best_stars == 2 %}
+                  <span class="stars-gold">★★☆</span>
+                {% else %}
+                  <span class="stars-gold">★☆☆</span>
+                {% endif %}
+              </div>
+              <div class="best-score-details">
+                <span class="best-label">Best Record:</span>
+                <span class="best-val">{{ item.best_score }} pts</span>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="card-footer-action">
+          {% if item.is_unlocked %}
+            <a href="{% url 'game:play' item.level.level_number %}" class="btn btn-primary btn-block play-level-btn" id="play-level-{{ item.level.level_number }}">
+              ▶ Launch Realm
+            </a>
+          {% else %}
+            <button class="btn btn-disabled btn-block" disabled title="Complete prior levels to unlock">
+              🔒 Complete Level {{ item.level.level_number|add:"-1" }} to Unlock
+            </button>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- Reset Progression Option -->
+  <div class="reset-section">
+    <div class="reset-card glass-panel">
+      <div class="reset-info">
+        <h4>Want a fresh start?</h4>
+        <p>Reset your session progression back to Level 1. This does not erase global high scores.</p>
+      </div>
+      <form method="POST" action="{% url 'game:reset_progress' %}" onsubmit="return confirm('Are you sure you want to reset your level progression back to Level 1?');">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-outline btn-sm reset-btn" id="btn-reset-progress">
+          🔄 Reset to Level 1
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

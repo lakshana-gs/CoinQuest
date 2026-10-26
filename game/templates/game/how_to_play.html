@@ -1,0 +1,128 @@
+{% extends 'game/base.html' %}
+{% load static %}
+
+{% block title %}How to Play & Guide — Coin Quest{% endblock %}
+
+{% block content %}
+<div class="page-container">
+  <div class="page-header text-center">
+    <div class="hero-badge">
+      <span class="badge-dot"></span> ADVENTURER'S HANDBOOK
+    </div>
+    <h1 class="page-title">How to Play <span class="text-gradient">Coin Quest</span></h1>
+    <p class="page-subtitle">
+      Everything you need to know about controls, mechanics, hazard evasion, and scoring!
+    </p>
+  </div>
+
+  <div class="guide-grid">
+    <!-- Controls Section -->
+    <div class="guide-card glass-panel">
+      <div class="card-icon-wrapper cyan-glow">
+        <span class="card-icon">🎮</span>
+      </div>
+      <h2>Keyboard & Touch Controls</h2>
+      <div class="controls-table">
+        <div class="control-row">
+          <span class="control-keys"><kbd>A</kbd> / <kbd>D</kbd> or <kbd>←</kbd> <kbd>→</kbd></span>
+          <span class="control-action">Move Left / Move Right</span>
+        </div>
+        <div class="control-row">
+          <span class="control-keys"><kbd>Space</kbd> / <kbd>W</kbd> or <kbd>↑</kbd></span>
+          <span class="control-action">Jump (Hold for higher jump)</span>
+        </div>
+        <div class="control-row">
+          <span class="control-keys"><kbd>ESC</kbd> or <kbd>P</kbd></span>
+          <span class="control-action">Pause or Resume Game</span>
+        </div>
+        <div class="control-row">
+          <span class="control-keys"><kbd>R</kbd></span>
+          <span class="control-action">Instant Level Restart</span>
+        </div>
+        <div class="control-row">
+          <span class="control-keys"><kbd>M</kbd></span>
+          <span class="control-action">Mute / Unmute Audio Synthesizer</span>
+        </div>
+        <div class="control-row">
+          <span class="control-keys">On-Screen Buttons</span>
+          <span class="control-action">Touch controls for mobile or tablets</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Objectives Section -->
+    <div class="guide-card glass-panel">
+      <div class="card-icon-wrapper gold-glow">
+        <span class="card-icon">🪙</span>
+      </div>
+      <h2>Core Objectives</h2>
+      <ul class="guide-list">
+        <li>
+          <strong>Gather Gold Coins:</strong> Each realm has a required target of coins (e.g., 8, 12, 14, 16, 20).
+        </li>
+        <li>
+          <strong>Awaken the Exit Portal:</strong> The portal starts dormant and gray. Once you collect the required coins, it begins spinning with vibrant golden energy!
+        </li>
+        <li>
+          <strong>Step Into the Portal:</strong> Jump into the active portal to conclude the run and unlock the next realm.
+        </li>
+        <li>
+          <strong>Preserve Your Lives:</strong> You start with 3 lives. Colliding with spikes or enemies deducts 1 life and gives brief invulnerability. Falling into the bottomless void resets your position to the start and costs 1 life.
+        </li>
+      </ul>
+    </div>
+
+    <!-- Scoring & Stars Section -->
+    <div class="guide-card glass-panel">
+      <div class="card-icon-wrapper purple-glow">
+        <span class="card-icon">⭐</span>
+      </div>
+      <h2>Scoring & Star Ratings</h2>
+      <p class="guide-text">Scores are validated and saved to the Django database upon level completion:</p>
+      <div class="formula-box">
+        <code>Final Score = (Coins × 100) + (Lives Remaining × 500) + Time Bonus</code>
+      </div>
+      <ul class="guide-list">
+        <li><strong>Coin Points:</strong> 100 points for every gold coin collected.</li>
+        <li><strong>Survival Bonus:</strong> 500 points for each remaining heart (up to 1,500 bonus points).</li>
+        <li><strong>Speed Bonus:</strong> Extra points for completing the realm faster than the target Par Time.</li>
+        <li><strong>Star Ratings:</strong>
+          <ul>
+            <li>★ <strong>1 Star:</strong> Complete the realm with target coins.</li>
+            <li>★★ <strong>2 Stars:</strong> Complete with all target coins and at least 2 lives.</li>
+            <li>★★★ <strong>3 Stars:</strong> Collect 100% of all coins in the realm under the par time!</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Hazards & Enemies Section -->
+    <div class="guide-card glass-panel">
+      <div class="card-icon-wrapper red-glow">
+        <span class="card-icon">⚠️</span>
+      </div>
+      <h2>Hazards & Traps</h2>
+      <div class="hazards-overview">
+        <div class="hazard-item">
+          <span class="h-badge spike-badge">▲ Spikes</span>
+          <p>Sharp crystalline or metallic thorns on ground or ceilings. Touch them and you take damage!</p>
+        </div>
+        <div class="hazard-item">
+          <span class="h-badge sentry-badge">👾 Patrolling Sentries</span>
+          <p>Lava slimes and cyber drones patrolling floating platforms back and forth. Time your leap over them!</p>
+        </div>
+        <div class="hazard-item">
+          <span class="h-badge moving-badge">↔ Moving Platforms</span>
+          <p>Floating platforms gliding smoothly across bottomless gaps. Ride them to reach elevated ledges.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="guide-cta text-center">
+    <a href="{% url 'game:play_default' %}" class="btn btn-primary btn-lg pulse-glow">
+      ▶ Start Quest Now
+    </a>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coin Quest — 2D Platform Adventure</title>
+  <meta name="description" content="Coin Quest is a vibrant 2D platform adventure game. Leap across floating islands, collect golden coins, dodge dangerous traps, and unlock challenging levels!">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Press+Start+2P&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="site-body">
+  <!-- Navigation Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="#home" class="brand-logo" data-nav="home">
+        <span class="coin-icon-spin" aria-hidden="true">🪙</span>
+        <span class="brand-text">COIN<span class="brand-accent">QUEST</span></span>
+      </a>
+
+      <nav class="site-nav" aria-label="Main Navigation">
+        <ul class="nav-list">
+          <li>
+            <a href="#home" class="nav-link active" data-view="home" data-nav="home">Home</a>
+          </li>
+          <li>
+            <a href="#levels" class="nav-link" data-view="levels" data-nav="levels">Levels</a>
+          </li>
+          <li>
+            <a href="#scores" class="nav-link" data-view="scores" data-nav="scores">Leaderboard</a>
+          </li>
+          <li>
+            <a href="#how-to-play" class="nav-link" data-view="howToPlay" data-nav="howToPlay">How to Play</a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <button id="global-sound-toggle" class="btn-icon" aria-label="Toggle sound" title="Toggle Sound">
+          <span class="sound-icon" id="sound-icon-display">🔊</span>
+        </button>
+        <button class="btn btn-primary btn-sm play-cta-btn" data-nav="play-1">
+          ▶ Play Now
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="site-main">
+    <!-- VIEW: HOME -->
+    <section id="view-home">
+      <section class="hero-section">
+        <div class="hero-backdrop"></div>
+        <div class="hero-content">
+          <div class="hero-badge">
+            <span class="badge-dot"></span> 2D INDIE PLATFORMER
+          </div>
+          <h1 class="hero-title">
+            COIN <span class="text-gradient">QUEST</span>
+          </h1>
+          <p class="hero-subtitle">
+            Embark on a high-flying quest across floating realms! Jump over yawning chasms, dodge razor-sharp spikes and patrolling sentries, collect gold coins, and unlock magical exit portals.
+          </p>
+
+          <div class="hero-cta-group">
+            <button class="btn btn-primary btn-lg pulse-glow" id="hero-play-btn" data-nav="play-1">
+              <span class="btn-icon-prefix">▶</span> Play Level 1
+            </button>
+            <button class="btn btn-secondary btn-lg" data-nav="levels">
+              🗺️ Level Select
+            </button>
+            <button class="btn btn-outline btn-lg" data-nav="scores">
+              🏆 Leaderboard
+            </button>
+          </div>
+
+          <div class="hero-stats-bar">
+            <div class="stat-pill">
+              <span class="stat-icon">⭐</span>
+              <div class="stat-info">
+                <span class="stat-val">5 Levels</span>
+                <span class="stat-lbl">Handcrafted Realms</span>
+              </div>
+            </div>
+            <div class="stat-pill">
+              <span class="stat-icon">🪙</span>
+              <div class="stat-info">
+                <span class="stat-val">88 Coins</span>
+                <span class="stat-lbl">Across All Worlds</span>
+              </div>
+            </div>
+            <div class="stat-pill">
+              <span class="stat-icon">⚡</span>
+              <div class="stat-info">
+                <span class="stat-val">60 FPS</span>
+                <span class="stat-lbl">Smooth Canvas Engine</span>
+              </div>
+            </div>
+            <div class="stat-pill">
+              <span class="stat-icon">🏅</span>
+              <div class="stat-info">
+                <span class="stat-val" id="home-total-runs">5 Runs</span>
+                <span class="stat-lbl">Saved Locally</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Features Cards -->
+      <section class="section-container">
+        <div class="section-header text-center">
+          <h2 class="section-title">Master the Adventure</h2>
+          <p class="section-subtitle">Intuitive controls, genuine platform physics, and thrilling challenges</p>
+        </div>
+
+        <div class="cards-grid three-col">
+          <div class="feature-card">
+            <div class="card-icon-wrapper cyan-glow"><span class="card-icon">🎮</span></div>
+            <h3 class="card-title">Fluid Controls</h3>
+            <p class="card-text">
+              Use <strong>A / D</strong> or arrows to move, and <strong>Space / W</strong> to leap. Features responsive coyote time and jump buffering!
+            </p>
+            <div class="key-hints">
+              <span class="key-cap">A</span>
+              <span class="key-cap">D</span>
+              <span class="key-sep">+</span>
+              <span class="key-cap key-space">SPACE</span>
+            </div>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-icon-wrapper gold-glow"><span class="card-icon">🪙</span></div>
+            <h3 class="card-title">Collect & Unlock</h3>
+            <p class="card-text">
+              Snatch enough coins in each realm to awaken the exit portal. Complete levels to unlock the next world!
+            </p>
+            <div class="key-hints">
+              <span class="star-pill">★ 1 Star: Clear</span>
+              <span class="star-pill">★★ 2 Stars: Target</span>
+              <span class="star-pill">★★★ 3 Stars: Par</span>
+            </div>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-icon-wrapper red-glow"><span class="card-icon">⚔️</span></div>
+            <h3 class="card-title">Hazards & Traps</h3>
+            <p class="card-text">
+              Beware of bottomless gaps, crystalline spikes, moving platforms, and patrolling sentries. Protect your 3 lives!
+            </p>
+            <div class="key-hints">
+              <span class="heart-pill">❤️ 3 Lives</span>
+              <span class="heart-pill">🛡️ Knockback Shield</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Hall of Fame Preview -->
+      <section class="section-container">
+        <div class="section-header-flex">
+          <div>
+            <h2 class="section-title">Hall of Fame</h2>
+            <p class="section-subtitle">Top platforming adventurers</p>
+          </div>
+          <button class="btn btn-outline btn-sm" data-nav="scores">Full Leaderboard →</button>
+        </div>
+        <div class="table-responsive">
+          <table class="leaderboard-table">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Adventurer</th>
+                <th>Realm</th>
+                <th>Score</th>
+                <th>Coins</th>
+                <th>Time</th>
+                <th>Rating</th>
+              </tr>
+            </thead>
+            <tbody id="home-top-scores-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+
+    <!-- VIEW: LEVEL SELECT -->
+    <section id="view-levels" style="display: none;">
+      <div class="page-container">
+        <div class="page-header text-center">
+          <div class="hero-badge">
+            <span class="badge-dot"></span> REALM SELECTOR
+          </div>
+          <h1 class="page-title">Choose Your <span class="text-gradient">Realm</span></h1>
+          <p class="page-subtitle">
+            Conquer each world by collecting enough gold coins to unlock its exit portal. Complete a realm to unlock the next!
+          </p>
+
+          <div class="progression-pill-wrapper">
+            <div class="progression-pill">
+              <span>Highest Unlocked: <strong id="levels-highest-text">Level 1 of 5</strong></span>
+              <div class="progress-bar-track">
+                <div class="progress-bar-fill" id="levels-progress-fill" style="width: 20%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="level-cards-grid" id="level-cards-container"></div>
+
+        <div class="reset-section">
+          <div class="reset-card glass-panel">
+            <div class="reset-info">
+              <h4>Want a fresh start?</h4>
+              <p>Reset your progression back to Level 1. (Your saved high scores are preserved).</p>
+            </div>
+            <button class="btn btn-outline btn-sm reset-btn" id="btn-static-reset">
+              🔄 Reset to Level 1
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW: PLAY -->
+    <section id="view-play" style="display: none;">
+      <div class="game-view-wrapper">
+        <!-- Live HUD Bar -->
+        <div class="game-hud" id="game-hud">
+          <div class="hud-left">
+            <div class="hud-item hud-lives" title="Remaining Lives">
+              <span class="hud-label">LIVES</span>
+              <div class="hearts-container" id="hud-hearts">
+                <span class="heart" id="heart-1">❤️</span>
+                <span class="heart" id="heart-2">❤️</span>
+                <span class="heart" id="heart-3">❤️</span>
+              </div>
+            </div>
+
+            <div class="hud-item hud-coins" title="Coins Collected">
+              <span class="hud-icon">🪙</span>
+              <span class="hud-val" id="hud-coins">0</span>
+              <span class="hud-sub">/ <span id="hud-target-coins">8</span></span>
+            </div>
+
+            <div class="hud-item hud-score" title="Current Score">
+              <span class="hud-label">SCORE</span>
+              <span class="hud-val score-highlight" id="hud-score">0</span>
+            </div>
+          </div>
+
+          <div class="hud-center">
+            <div class="hud-level-pill">
+              <span class="hud-level-num" id="hud-lvl-num">LVL 1</span>
+              <span class="hud-level-title" id="hud-lvl-title">Verdant Groves</span>
+            </div>
+          </div>
+
+          <div class="hud-right">
+            <div class="hud-item hud-timer" title="Elapsed Time">
+              <span class="hud-icon">⏱️</span>
+              <span class="hud-val" id="hud-timer">00:00</span>
+            </div>
+            <button id="hud-sound-btn" class="hud-btn" title="Toggle Sound">
+              <span id="hud-sound-icon">🔊</span>
+            </button>
+            <button id="hud-restart-btn" class="hud-btn" title="Restart Level">🔄</button>
+            <button id="hud-pause-btn" class="hud-btn" title="Pause Game">⏸️</button>
+            <button class="hud-btn" data-nav="levels" title="Level Select">🗺️</button>
+          </div>
+        </div>
+
+        <!-- Canvas Stage -->
+        <div class="canvas-stage-container" id="canvas-stage-container">
+          <canvas id="game-canvas" width="960" height="540" tabindex="0"></canvas>
+
+          <div class="objective-banner" id="objective-banner">
+            <span class="obj-icon">🎯</span>
+            <span class="obj-text">Collect at least <strong>8 coins</strong> to activate the Exit Portal!</span>
+          </div>
+
+          <!-- Virtual Touch Controls -->
+          <div class="touch-controls-layer" id="touch-controls-layer">
+            <div class="touch-group touch-left-group">
+              <button class="touch-btn" id="touch-btn-left">◀</button>
+              <button class="touch-btn" id="touch-btn-right">▶</button>
+            </div>
+            <div class="touch-group touch-right-group">
+              <button class="touch-btn touch-btn-jump" id="touch-btn-jump">▲ JUMP</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="game-footer-bar">
+          <div class="controls-legend">
+            <span><kbd>A</kbd> / <kbd>D</kbd> or <kbd>←</kbd> <kbd>→</kbd> Move</span>
+            <span><kbd>W</kbd> / <kbd>Space</kbd> or <kbd>↑</kbd> Jump</span>
+            <span><kbd>ESC</kbd> or <kbd>P</kbd> Pause</span>
+            <span><kbd>R</kbd> Restart</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW: SCORES / LEADERBOARD -->
+    <section id="view-scores" style="display: none;">
+      <div class="page-container">
+        <div class="page-header text-center">
+          <div class="hero-badge">
+            <span class="badge-dot"></span> HALL OF FAME
+          </div>
+          <h1 class="page-title">High Score <span class="text-gradient">Leaderboard</span></h1>
+          <p class="page-subtitle">Celebrate the swiftest adventurers across all 5 realms!</p>
+        </div>
+
+        <div class="scores-toolbar glass-panel">
+          <div class="level-tabs">
+            <button class="tab-pill active" data-score-tab="all">All Realms</button>
+            <button class="tab-pill" data-score-tab="1">Lvl 1</button>
+            <button class="tab-pill" data-score-tab="2">Lvl 2</button>
+            <button class="tab-pill" data-score-tab="3">Lvl 3</button>
+            <button class="tab-pill" data-score-tab="4">Lvl 4</button>
+            <button class="tab-pill" data-score-tab="5">Lvl 5</button>
+          </div>
+        </div>
+
+        <div class="table-card glass-panel">
+          <div class="table-responsive" id="leaderboard-table-wrap">
+            <table class="leaderboard-table full-table">
+              <thead>
+                <tr>
+                  <th>Rank</th>
+                  <th>Adventurer</th>
+                  <th>Realm</th>
+                  <th>Score</th>
+                  <th>Coins</th>
+                  <th>Lives</th>
+                  <th>Time</th>
+                  <th>Rating</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody id="leaderboard-tbody"></tbody>
+            </table>
+          </div>
+          <div class="empty-state" id="leaderboard-empty" style="display: none;">
+            <span class="empty-icon">🪙</span>
+            <h3>No Scores Found</h3>
+            <p>Conquer this realm to claim your spot on the leaderboard!</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW: HOW TO PLAY -->
+    <section id="view-how-to-play" style="display: none;">
+      <div class="page-container">
+        <div class="page-header text-center">
+          <div class="hero-badge">
+            <span class="badge-dot"></span> ADVENTURER'S HANDBOOK
+          </div>
+          <h1 class="page-title">How to Play <span class="text-gradient">Coin Quest</span></h1>
+          <p class="page-subtitle">Everything you need to know about controls, objectives, and hazards!</p>
+        </div>
+
+        <div class="guide-grid">
+          <div class="guide-card glass-panel">
+            <div class="card-icon-wrapper cyan-glow"><span class="card-icon">🎮</span></div>
+            <h2>Controls</h2>
+            <div class="controls-table">
+              <div class="control-row">
+                <span class="control-keys"><kbd>A</kbd> / <kbd>D</kbd> or <kbd>←</kbd> <kbd>→</kbd></span>
+                <span class="control-action">Move Left / Right</span>
+              </div>
+              <div class="control-row">
+                <span class="control-keys"><kbd>Space</kbd> / <kbd>W</kbd> or <kbd>↑</kbd></span>
+                <span class="control-action">Jump (Hold for higher jump)</span>
+              </div>
+              <div class="control-row">
+                <span class="control-keys"><kbd>ESC</kbd> or <kbd>P</kbd></span>
+                <span class="control-action">Pause or Resume</span>
+              </div>
+              <div class="control-row">
+                <span class="control-keys"><kbd>R</kbd></span>
+                <span class="control-action">Quick Level Restart</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="guide-card glass-panel">
+            <div class="card-icon-wrapper gold-glow"><span class="card-icon">🪙</span></div>
+            <h2>Core Objectives</h2>
+            <ul class="guide-list">
+              <li><strong>Collect Gold Coins:</strong> Reach the required target for each realm.</li>
+              <li><strong>Awaken the Exit Portal:</strong> The portal activates with swirling golden energy once you collect enough coins!</li>
+              <li><strong>Step Into the Portal:</strong> Jump into the active portal to clear the level and unlock the next world!</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="guide-cta text-center">
+          <button class="btn btn-primary btn-lg pulse-glow" data-nav="play-1">
+            ▶ Start Quest Now
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODALS -->
+  <div class="game-modal-backdrop" id="pause-modal" aria-hidden="true">
+    <div class="game-modal-card glass-panel">
+      <div class="modal-icon-badge">⏸️</div>
+      <h2 class="modal-title">GAME PAUSED</h2>
+      <div class="modal-stats-summary">
+        <div class="mstat"><span class="mstat-lbl">Coins</span><span class="mstat-val" id="pause-coins">0</span></div>
+        <div class="mstat"><span class="mstat-lbl">Time</span><span class="mstat-val" id="pause-time">00:00</span></div>
+        <div class="mstat"><span class="mstat-lbl">Score</span><span class="mstat-val" id="pause-score">0</span></div>
+      </div>
+      <div class="modal-actions-stacked">
+        <button class="btn btn-primary btn-lg" id="btn-resume-game">▶ Resume Game</button>
+        <button class="btn btn-secondary btn-md" id="btn-pause-restart">🔄 Restart Level</button>
+        <button class="btn btn-outline btn-md" data-nav="levels">🗺️ Level Select</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="game-modal-backdrop" id="victory-modal" aria-hidden="true">
+    <div class="game-modal-card glass-panel victory-card">
+      <div class="celebration-particles">✨ 🏆 ✨</div>
+      <h2 class="modal-title text-gradient">REALM CLEARED!</h2>
+      <p class="modal-desc" id="victory-realm-name">Level 1</p>
+      <div class="victory-stars">
+        <span class="star-icon" id="star-1">★</span>
+        <span class="star-icon" id="star-2">★</span>
+        <span class="star-icon" id="star-3">★</span>
+      </div>
+      <div class="score-breakdown-card">
+        <div class="breakdown-row"><span>🪙 Coins:</span><strong id="victory-coins-summary">0</strong></div>
+        <div class="breakdown-row"><span>❤️ Lives:</span><strong id="victory-lives-summary">3</strong></div>
+        <div class="breakdown-row"><span>⏱️ Time:</span><strong id="victory-time-summary">0.0s</strong></div>
+        <div class="breakdown-divider"></div>
+        <div class="breakdown-row final-score-row"><span>TOTAL SCORE:</span><strong class="total-score-val" id="victory-final-score">0</strong></div>
+      </div>
+      <div class="submit-score-section">
+        <label for="player-name-input" class="input-label">Adventurer Name:</label>
+        <div class="input-with-button">
+          <input type="text" id="player-name-input" maxlength="25" value="Adventurer" class="form-input">
+          <button class="btn btn-primary" id="btn-save-score">Save Record</button>
+        </div>
+        <div class="submit-status-msg" id="submit-status-msg"></div>
+      </div>
+      <div class="modal-actions-stacked">
+        <button class="btn btn-primary btn-lg pulse-glow" id="btn-next-level">Next Level →</button>
+        <div class="button-row">
+          <button class="btn btn-secondary btn-md" id="btn-victory-replay">🔄 Replay</button>
+          <button class="btn btn-outline btn-md" data-nav="levels">🗺️ Levels</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="game-modal-backdrop" id="gameover-modal" aria-hidden="true">
+    <div class="game-modal-card glass-panel gameover-card">
+      <div class="modal-icon-badge red-badge">💀</div>
+      <h2 class="modal-title red-text">QUEST FAILED!</h2>
+      <p class="modal-desc">You ran out of lives. Give it another shot!</p>
+      <div class="modal-stats-summary">
+        <div class="mstat"><span class="mstat-lbl">Coins</span><span class="mstat-val" id="gameover-coins">0</span></div>
+        <div class="mstat"><span class="mstat-lbl">Time</span><span class="mstat-val" id="gameover-time">00:00</span></div>
+        <div class="mstat"><span class="mstat-lbl">Score</span><span class="mstat-val" id="gameover-score">0</span></div>
+      </div>
+      <div class="modal-actions-stacked">
+        <button class="btn btn-danger btn-lg pulse-glow" id="btn-gameover-retry">🔄 Try Again</button>
+        <button class="btn btn-secondary btn-md" data-nav="levels">🗺️ Level Select</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-info">
+        <div class="footer-logo">🪙 COIN QUEST</div>
+        <p class="footer-desc">2D platform adventure crafted with HTML5 Canvas and JavaScript.</p>
+      </div>
+      <div class="footer-copy">&copy; 2026 Coin Quest.</div>
+    </div>
+  </footer>
+
+  <script src="js/sound.js"></script>
+  <script src="js/levels.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/static_ui.js"></script>
+</body>
+</html>

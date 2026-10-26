@@ -1,0 +1,131 @@
+{% extends 'game/base.html' %}
+{% load static %}
+
+{% block title %}Leaderboard & High Scores — Coin Quest{% endblock %}
+
+{% block content %}
+<div class="page-container">
+  <div class="page-header text-center">
+    <div class="hero-badge">
+      <span class="badge-dot"></span> HALL OF FAME
+    </div>
+    <h1 class="page-title">High Score <span class="text-gradient">Leaderboard</span></h1>
+    <p class="page-subtitle">
+      Celebrate the swiftest and most daring adventurers across all 5 realms!
+    </p>
+  </div>
+
+  <!-- Filters & Search Toolbar -->
+  <div class="scores-toolbar glass-panel">
+    <!-- Level Filter Tabs -->
+    <div class="level-tabs" role="tablist">
+      <a href="{% url 'game:scores' %}" class="tab-pill {% if not selected_level %}active{% endif %}" id="tab-all-levels">
+        All Realms
+      </a>
+      {% for lvl in levels %}
+        <a href="{% url 'game:scores' %}?level={{ lvl.level_number }}{% if search_query %}&q={{ search_query }}{% endif %}"
+           class="tab-pill {% if selected_level == lvl.level_number %}active{% endif %}"
+           id="tab-level-{{ lvl.level_number }}">
+          Lvl {{ lvl.level_number }}
+        </a>
+      {% endfor %}
+    </div>
+
+    <!-- Search Box -->
+    <form method="GET" action="{% url 'game:scores' %}" class="search-form">
+      {% if selected_level %}
+        <input type="hidden" name="level" value="{{ selected_level }}">
+      {% endif %}
+      <div class="search-input-group">
+        <input type="text" name="q" value="{{ search_query }}" placeholder="Filter by adventurer name..." class="search-input" id="search-input">
+        <button type="submit" class="btn btn-primary btn-sm" id="search-submit-btn">Search</button>
+        {% if search_query or selected_level %}
+          <a href="{% url 'game:scores' %}" class="btn btn-outline btn-sm" title="Clear Filters">Clear</a>
+        {% endif %}
+      </div>
+    </form>
+  </div>
+
+  <!-- Scores Table -->
+  <div class="table-card glass-panel">
+    {% if scores %}
+      <div class="table-responsive">
+        <table class="leaderboard-table full-table">
+          <thead>
+            <tr>
+              <th scope="col">Rank</th>
+              <th scope="col">Adventurer</th>
+              <th scope="col">Realm</th>
+              <th scope="col">Score</th>
+              <th scope="col">Coins</th>
+              <th scope="col">Lives</th>
+              <th scope="col">Time</th>
+              <th scope="col">Rating</th>
+              <th scope="col">Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for s in scores %}
+              <tr class="{% if forloop.counter == 1 and not selected_level %}top-rank-row{% endif %}">
+                <td class="rank-col">
+                  {% if forloop.counter == 1 %}
+                    <span class="medal gold-medal">🥇 1st</span>
+                  {% elif forloop.counter == 2 %}
+                    <span class="medal silver-medal">🥈 2nd</span>
+                  {% elif forloop.counter == 3 %}
+                    <span class="medal bronze-medal">🥉 3rd</span>
+                  {% else %}
+                    <span class="rank-num">#{{ forloop.counter }}</span>
+                  {% endif %}
+                </td>
+                <td class="player-col">
+                  <span class="player-avatar">👤</span>
+                  <span class="player-name-text">{{ s.player_name }}</span>
+                </td>
+                <td>
+                  <span class="level-tag">Lvl {{ s.level.level_number }}: {{ s.level.title }}</span>
+                </td>
+                <td class="score-col">
+                  <strong>{{ s.score }}</strong>
+                </td>
+                <td>🪙 {{ s.coins_collected }}/{{ s.level.total_coins }}</td>
+                <td>
+                  <span class="hearts-mini">
+                    {% if s.lives_remaining == 3 %}❤️❤️❤️{% elif s.lives_remaining == 2 %}❤️❤️🖤{% else %}❤️🖤🖤{% endif %}
+                  </span>
+                </td>
+                <td>⏱️ {{ s.time_taken_seconds|floatformat:1 }}s</td>
+                <td>
+                  <span class="stars-display">
+                    {% if s.stars == 3 %}
+                      <span class="stars-gold">★★★</span>
+                    {% elif s.stars == 2 %}
+                      <span class="stars-gold">★★☆</span>
+                    {% else %}
+                      <span class="stars-gold">★☆☆</span>
+                    {% endif %}
+                  </span>
+                </td>
+                <td class="date-col">{{ s.created_at|date:"M d, H:i" }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <span class="empty-icon">🪙</span>
+        <h3>No High Scores Yet</h3>
+        <p>
+          {% if search_query or selected_level %}
+            No scores found matching your current filter. Try clearing your search!
+          {% else %}
+            Be the very first adventurer to conquer this realm and etch your name into the Hall of Fame!
+          {% endif %}
+        </p>
+        <a href="{% url 'game:play_default' %}" class="btn btn-primary btn-md">▶ Play Coin Quest</a>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
