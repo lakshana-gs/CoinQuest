@@ -93,12 +93,20 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
 import tempfile
+import shutil
 
 if os.environ.get('VERCEL'):
+    tmp_db = Path(tempfile.gettempdir()) / 'coinquest_db.sqlite3'
+    seed_db = BASE_DIR / 'seed.sqlite3'
+    if seed_db.exists() and not tmp_db.exists():
+        try:
+            shutil.copyfile(seed_db, tmp_db)
+        except Exception:
+            pass
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': Path(tempfile.gettempdir()) / 'db.sqlite3',
+            'NAME': tmp_db,
         }
     }
 else:

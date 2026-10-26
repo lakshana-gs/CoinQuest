@@ -65,15 +65,6 @@ DEFAULT_LEVELS = [
 def ensure_default_levels():
     """Ensure that the 5 standard levels exist in the database."""
     try:
-        from django.db import connection
-        tables = connection.introspection.table_names()
-        if 'game_level' not in tables or 'game_scorerecord' not in tables:
-            from django.core.management import call_command
-            call_command('migrate', interactive=False)
-    except Exception:
-        pass
-
-    try:
         if Level.objects.count() < len(DEFAULT_LEVELS):
             for data in DEFAULT_LEVELS:
                 Level.objects.get_or_create(
