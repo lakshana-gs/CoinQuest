@@ -16,9 +16,23 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.http import HttpResponse
+
+def favicon_view(request):
+    svg_icon = (
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">'
+        '<circle cx="50" cy="50" r="46" fill="#f59e0b" stroke="#b45309" stroke-width="4"/>'
+        '<circle cx="50" cy="50" r="36" fill="#fbbf24"/>'
+        '<text x="50" y="66" font-size="48" font-family="sans-serif" font-weight="900" '
+        'text-anchor="middle" fill="#78350f">Q</text>'
+        '</svg>'
+    )
+    return HttpResponse(svg_icon, content_type='image/svg+xml')
 
 urlpatterns = [
+    path('favicon.ico', favicon_view, name='favicon'),
     path('admin/', admin.site.urls),
     path('', include('game.urls')),
 ]
+
 

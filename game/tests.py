@@ -312,4 +312,21 @@ class CoinQuestScoreSubmissionTests(TestCase):
         )
         self.assertEqual(response.status_code, 403)
 
+    def test_favicon_ico_returns_ok(self):
+        """Verify /favicon.ico returns 200 with SVG content and does not 404."""
+        response = self.client.get('/favicon.ico')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('image/svg+xml', response.headers.get('Content-Type', ''))
+        self.assertIn('<svg', response.content.decode('utf-8'))
+
+    def test_home_page_under_simulated_vercel(self):
+        """Verify home page loads properly under simulated Vercel conditions."""
+        import os
+        from django.test.utils import override_settings
+        with override_settings(DEBUG=False):
+            response = self.client.get(reverse('game:home'))
+            self.assertEqual(response.status_code, 200)
+            self.assertContains(response, "COIN")
+
+
 

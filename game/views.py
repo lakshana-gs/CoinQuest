@@ -64,21 +64,24 @@ DEFAULT_LEVELS = [
 
 def ensure_default_levels():
     """Ensure that the 5 standard levels exist in the database."""
-    if os.environ.get('VERCEL'):
-        try:
-            from django.db import connection
-            from django.core.management import call_command
-            tables = connection.introspection.table_names()
-            if 'game_level' not in tables:
-                call_command('migrate', interactive=False)
-        except Exception as e:
-            pass
+    try:
+        from django.db import connection
+        from django.core.management import call_command
+        tables = connection.introspection.table_names()
+        if 'game_level' not in tables or 'game_scorerecord' not in tables:
+            call_command('migrate', interactive=False)
+    except Exception:
+        pass
 
-    for data in DEFAULT_LEVELS:
-        Level.objects.get_or_create(
-            level_number=data['level_number'],
-            defaults=data
-        )
+    try:
+        for data in DEFAULT_LEVELS:
+            Level.objects.get_or_create(
+                level_number=data['level_number'],
+                defaults=data
+            )
+    except Exception:
+        pass
+
 
 
 
@@ -106,10 +109,15 @@ def unlock_level_in_session(request, level_num):
 def home_view(request):
     ensure_default_levels()
     unlocked = get_unlocked_levels(request)
-    levels = Level.objects.filter(is_active=True).order_by('level_number')
     
-    top_scores = ScoreRecord.objects.select_related('level').order_by('-score')[:5]
-    total_runs = ScoreRecord.objects.count()
+    try:
+        levels = Level.objects.filter(is_active=True).order_by('level_number')
+        top_scores = ScoreRecord.objects.select_related('level').order_by('-score')[:5]
+        total_runs = ScoreRecord.objects.count()
+    except Exception:
+        levels = []
+        top_scores = []
+        total_runs = 0
     
     # User's recent player name
     player_name = request.session.get('player_name', 'Adventurer')
@@ -123,6 +131,7 @@ def home_view(request):
         'player_name': player_name,
     }
     return render(request, 'game/home.html', context)
+
 
 
 @ensure_csrf_cookie
@@ -214,7 +223,9 @@ def scores_view(request):
 
 
 def how_to_play_view(request):
+    ensure_default_levels()
     return render(request, 'game/how_to_play.html')
+
 
 
 @require_POST

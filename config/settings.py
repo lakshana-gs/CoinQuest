@@ -19,15 +19,20 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-wba@o&uvk%auyl=v)q)54=_k1u+js4e8*%+-f*rpmpdq!roxgs'
-
 import os
 
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = os.environ.get(
+    'DJANGO_SECRET_KEY',
+    os.environ.get('SECRET_KEY', 'django-insecure-wba@o&uvk%auyl=v)q)54=_k1u+js4e8*%+-f*rpmpdq!roxgs')
+)
+
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DJANGO_DEBUG', 'True').lower() in ('true', '1')
+# On Vercel or production, defaults to False unless explicitly enabled via DJANGO_DEBUG
+DEBUG = os.environ.get('DJANGO_DEBUG', 'False' if os.environ.get('VERCEL') else 'True').lower() in ('true', '1')
 
 ALLOWED_HOSTS = ['*']
+
 
 CSRF_TRUSTED_ORIGINS = [
     'https://*.onrender.com',
@@ -140,14 +145,21 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_ROOT.mkdir(parents=True, exist_ok=True)
+
 STORAGES = {
     "default": {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
 }
+
+# Allow WhiteNoise to serve static files from app finders even if collectstatic is omitted in serverless
+WHITENOISE_USE_FINDERS = True
+WHITENOISE_MANIFEST_STRICT = False
+
 
 
 
