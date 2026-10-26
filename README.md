@@ -92,7 +92,18 @@ The repository includes a ready-to-run static build in the [`docs/`](docs/) fold
 
 ---
 
-### Option 2: Deploy Full Django Backend (Render / Railway)
+### Option 2: Deploy to Vercel (1-Click Free Hosting)
+
+The repository includes [`vercel.json`](vercel.json) and `.vercelignore` pre-configured for Vercel's Python serverless runtime.
+
+1. Go to [vercel.com](https://vercel.com) and log in with GitHub.
+2. Click **Add New...** → **Project**.
+3. Select your `CoinQuest` repository (`lakshana-gs/CoinQuest`).
+4. Click **Deploy**. Vercel will build the serverless functions and provide your live URL!
+
+---
+
+### Option 3: Deploy Full Django Backend (Render / Railway)
 
 The project includes `requirements.txt`, `Procfile`, `render.yaml`, and `whitenoise` for static file compression.
 
@@ -101,3 +112,4 @@ The project includes `requirements.txt`, `Procfile`, `render.yaml`, and `whiteno
 2. Go to [Render.com](https://render.com) and log in with your GitHub account.
 3. Click **New +** → **Blueprint** and select your `CoinQuest` repository.
 4. Render will automatically read `render.yaml`, install dependencies, run migrations, collect static files, and launch your live Django app!
+
